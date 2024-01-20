@@ -23,10 +23,11 @@ print("profile", type(profile))
 print("addres", type(addres))
 print("telephone", type(telephone))
 #3. Logicos. (Valores o expresiones booleanas)
-usuario_activo = true
+
 print()
 #4. Listas.
 frutas = ['apple', 'banana']
+colors = ['blue','red','white','green','brown']
 #5. Tuplas.
 #6. Diccionarios.
 #7. Conjuntos.

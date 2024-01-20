@@ -1,0 +1,11 @@
+Proceso staging:
+
+Primer comando: Enviar paquete a stating o a cola
+$git add . / $git add --all /git add FILE_NAME.ext / git add FOLDER_NAME
+
+Segundo comando: Anexar mensaje - ¿Que contiene el paquete?
+$git commit -m "Aqui va el mensaje " //-m significa mensaje
+
+Tercer comando: Enviar o desplegar el paquete hacia su destino (RAMA).
+$git push origin NOMBRE_RAMA/BRANCH_NAME / $git push
+Comando para hacer seguimiento del 
