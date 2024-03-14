@@ -1,13 +1,13 @@
 '''
-Dev: John E.
-Script description: Configure  SQLite3 data base
+Desarrollador: John Jairo Erazo Chavez.
+Descripción del algoritmo: Configuración  SQLite3 en base de datos
 '''
 
 #Import engine database package
 import sqlite3
 
 #Create a database connection (Database name)
-con = sqlite3.connect('market.db')
+con = sqlite3.connect('school.db')
 
 #Creating cursor object by conection => Let us execute sql commands or operations (Query)
 cur = con.cursor()
