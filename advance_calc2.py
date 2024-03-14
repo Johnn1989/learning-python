@@ -15,7 +15,9 @@ def calculator(x,y,z):
         return x - y
     elif z == '3' :
         return x * y
-    elif z == '4' :
+    elif z == '4' 
+    if y == 0
+
         return x / y
     else :
         print("::: Faild, invalid option:::") 
@@ -29,8 +31,17 @@ input("[2]. Restar")
 input("[3]. Multiplicar")
 input("[4]. Dividir")
 opc = input("Digite una opcion del menu: ")
-
+#Formato de salid 1:
+if opc >= 1 and opc <= 4:
+    ans = calculator (n1, n2, opc)
+    print("Suma:", ans[0])
+    print("Resta:", ans[0])
+    print("Multiplicación:", ans[0])
+    print("División:", ans[0])
 ans = calculator(n1, n2, opc)
 print("resultado: ", ans)
+
+#Formato de salida 2:
+#print("Resultado")
 
 

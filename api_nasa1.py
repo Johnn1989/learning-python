@@ -8,10 +8,13 @@ Scrip description: Get and read data from NASA API about comets
 
 
 import requests
+import os
 
+
+os.system('clear')
 def get_comet_data(api_key):
     print(":::COMET INFORMATION:::")
-    url = f"?api_key={api_key}"
+    url = f"https://?api_key={api_key}"
 
     try:
         #Realizar la solicitud a la API 
