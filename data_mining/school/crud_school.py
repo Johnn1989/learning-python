@@ -4,143 +4,118 @@ R => Read (SELECT)
 U => Update (UPDATE)
 D => Delete (DELETE)
 
-UPDATE AND DELETE NEED A WHERE CLAUSE.
+
 '''
 
+from school_db import con, cur
+import os
 import bcrypt
-from database import con, cur
-import os 
+
 
 status_menu = True
 global status_op
 
+nombres_tablas = [
+    "countries",
+    "departaments",
+    "cities",
+    "identification_types",
+    "persons",
+    "students",
+    "users",
+]
+
+nombres_atributos = [
+    [ "name", "abrev", "descrip" ],
+    [ "name", "abrev", "descrip", "id_country" ],
+    [ "name", "abrev", "descrip", "id_dep" ],
+    [ "name", "abrev", "descrip" ],
+    [ "first_name", "last_name", "id_ident_type", "ident_number", "id_exp_city", "address", "mobile", "id_user" ],
+    [ "code", "id_person", "status" ],
+    [ "email", "password", "status" ],
+]
+
+nombres_cols=[
+     "name,abrev, descrip" ,
+     "name, abrev, descrip, id_country" ,
+     "name, abrev, descrip, id_dep" ,
+     "name, abrev, descrip" ,
+     "first_name, last_name, id_ident_type, ident_number, id_exp_city, address, mobile, id_user" ,
+     "code, id_person, status" ,
+     "email, password, status" ,
+    
+]
+
 def hash_password(passwd):
     return bcrypt.hashpw(passwd.encode(), bcrypt.gensalt())
 
-def create_user(op):
-    #Create a new user 
+def create_data(values,cols,table,name):
+    #Create a new user
     os.system('clear')
 
-    print("::: Signup form :::")
-    fname = input("Your firstname: ")
-    lname = input("Your lastname: ")
-    ident = input("Your ident number: ")
-    email = input("Your email: ")
-    passwd = input("Your password: ")
-    passwd_hashed = hash_password(passwd)
-
-    new_user = f'''
+    values_query=""
+    
+    print(f"::: {name} Form :::")
+    for value in values:
+        values_query+="'"+(input(f"Your {value}: "))+"',"
+    values_query = values_query[:-1]
+    print(values_query)
+    new_data = f'''
         INSERT INTO 
-            users (firstname, lastname, ident_number, email, password) 
-            VALUES('{fname}', '{lname}' , '{ident}' , '{email}' , "{passwd_hashed}")
+            {table} ({cols}) 
+            VALUES({values_query})
     '''
-    con.execute(new_user)
+    con.execute(new_data)
     con.commit()
 
-    print("::: New user has been created successfully :::")
-    os.system('pause')
-    menu()
-
-def list_users (op):
-    #Read all the data from table users
-    os.system('clear')
-    cur.execute("SELECT * FROM users")
-    print(cur.fetchall())
-
-    os.system('pause')
-    menu()
-    
-def search_user(op):
-    os.system('clear')
-    print("::: SARCH USER BY IDENTIFICATION NUMBER :::")
-    ident_num = input("Identification number: ")
-
-    cur.execute(f"SELECT firstname, email FROM users WHERE ident_number = '{ident_num}' ")
-    print(cur.fetchall())
-
-    os.system('pause')
-    menu()
-
-def update_user(op):
-    os.system('clear')
-    print("::: UPDATE USER FORM :::")
-    iden = input("User identification: ") 
-
-    cur.execute("SELECT firstname FROM users WHERE ident_number=?", [iden])
-    print(f"Current name: {cur.fetchall()}")
-
-    user_name = input("New user name: ")
-
-    conf = input("Do you want to update the user-name? (Y/n): ") 
-    if conf == 'Y' or conf == 'y':
-        cur.execute(f"UPDATE users SET firstname = '{user_name}' WHERE ident_number = '{iden}'")
-        con.commit()
-        print("::: User-name has been updated successfully :::")
-
-    cur.execute("SELECT firstname FROM users WHERE ident_number=?", [iden])
-    print(f"Current name: {cur.fetchall()}")
-
-    os.system('pause')
-    menu()
-
-def delete_user(op):
-    os.system('clear')
-    print("::: DELETE USER FORM :::")
-    iden = input("Enter the user identification: ") 
-
-    cur.execute("SELECT firstname, lastname FROM users WHERE ident_number=?", [iden])
-    print(f"User to delete is: {cur.fetchall()}")
-
-    conf = input ("Do you want to delete the user? (Y/n): ")
-    if conf == 'Y' or conf == 'y':
-        cur.execute(f"DELETE FROM users WHERE ident_number = '{iden}' ")
-        con.commit()
-        print("::: User has been deleted successfully :::")
-
-    cur.execute("SELECT firstname, lastname FROM users WHERE ident_number=?", [iden])
-    print(f"Current name: {cur.fetchall()}")
-
+    print(f"::: New {name} has been created sucessfully :::")
     os.system('pause')
     menu()
 
 def menu():
     global opt
     status_opt = True
-    while status_menu:
+    while status_menu: 
         os.system('clear')
-        print("::::::::::::::::::")
-        print(":::::: MENU ::::::")
-        print("::::::::::::::::::")
-        print("[1]. Create a new user")
-        print("[2]. List users")
-        print("[3]. Search user")
-        print("[4]. Update user")
-        print("[5]. Delete user")
-        print("[6]. Exit")
-
+        print(":::::::::::::::::::::::")
+        print(":::::: MAIN MENU ::::::")
+        print(":::::::::::::::::::::::")
+        print("[1]. Create countrie")
+        print("[2]. Create departament")
+        print("[3]. Create city")
+        print("[4]. Create types identification")
+        print("[5]. Create person")
+        print("[6]. Create student")
+        print("[7]. Create user")
+        print("[8]. Exit")
+        
         while status_opt:
             opt = input("Press an option: ")
-            if opt < '1' or opt > '6':
+            if opt < '1' or opt > '8':
                 print(".:::::: Invalid option, try again.")
             else :
                 status_opt = False
 
         if opt == '1':
-            create_user(opt)
+            create_data(nombres_atributos[0], nombres_cols[0] ,nombres_tablas[0],nombres_tablas[0])
         elif opt == '2':
-            list_users(opt)  
+            create_data(nombres_atributos[1],nombres_cols[1],nombres_tablas[1],nombres_tablas[1])
         elif opt == '3':
-            search_user(opt)
+            create_data(nombres_atributos[2],nombres_cols[2],nombres_tablas[2],nombres_tablas[2])
         elif opt == '4':
-            update_user(opt)
+            create_data(nombres_atributos[3],nombres_cols[3],nombres_tablas[3],nombres_tablas[4])
         elif opt == '5':
-            delete_user(opt)
-        else:
+            create_data(nombres_atributos[4],nombres_cols[4],nombres_tablas[4],nombres_tablas[4])
+        elif opt == '6':
+            create_data(nombres_atributos[5],nombres_cols[5],nombres_tablas[5],nombres_tablas[5])
+        elif opt == '7':
+            create_data(nombres_atributos[6],nombres_cols[6],nombres_tablas[6],nombres_tablas[6])
+        else: 
             print("::: See 'u soon :::")
             exit()
-
-#Call main menu              
+    
+# Call main menu
 menu()
 
-#Close connection
+# Close connection
 con.close()

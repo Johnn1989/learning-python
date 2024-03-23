@@ -1,118 +1,119 @@
 '''
 Desarrollador: John Jairo Erazo Chavez.
-Descripción del algoritmo: Configuración  SQLite3 en base de datos
+
+Descripción del algoritmo: Desarrollo del taller del modulo_6
+
 '''
 import sqlite3
 
-import os
+con = sqlite3.connect('school.db')
 
-# Especifica la ruta del archivo de la base de datos
-ruta_base_de_datos = 'school.db'
-if os.path.exists(ruta_base_de_datos):
-    # Elimina el archivo de la base de datos
-    os.remove(ruta_base_de_datos)
-    print("La base de datos ha sido eliminada exitosamente.")
-else:
-    print("La base de datos no existe.")
+cur = con.cursor()
+
     
-con = sqlite3.connect("school.db")
-con.execute("PRAGMA foreign_keys = ON")
-cursor = con.cursor()
 
-cursor.execute('''CREATE TABLE IF NOT EXISTS countries (
-                    id INTEGER PRIMARY KEY NOT NULL ,
-                    name VARCHAR(100) NOT NULL,
-                    abrev VARCHAR(10) NOT NULL,
-                    descrip VARCHAR(10) NOT NULL,
-                    created_at DATETIME NOT NULL,
-                    updated_at DATETIME NOT NULL,
-                    deleled_at DATETIME NULL
-                    
-                    )''')
+#Create users table
+array_querys = [
+    '''
+    CREATE TABLE IF NOT EXISTS countries (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        abrev TEXT NOT NULL,
+        descrip TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
+        updated_at TIMESTAMP NULL,
+        deleted_at TIMESTAMP NULL
+    );
+    ''',
+    '''
+    CREATE TABLE IF NOT EXISTS departaments (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        abrev TEXT NOT NULL,
+        descrip TEXT NOT NULL,
+        id_country INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
+        updated_at TIMESTAMP NULL,
+        deleted_at TIMESTAMP NULL,
+        FOREIGN KEY (id_country) REFERENCES countries(id)
+    );
+    ''',
+    '''
+    CREATE TABLE IF NOT EXISTS cities (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        abrev TEXT NOT NULL,
+        descrip TEXT NOT NULL,
+        id_dep INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
+        updated_at TIMESTAMP NULL,
+        deleted_at TIMESTAMP NULL,
+        FOREIGN KEY (id_dep) REFERENCES departaments(id)
+    );
+    ''',
+    '''
+    CREATE TABLE IF NOT EXISTS identification_types (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        abrev TEXT NOT NULL,
+        descrip TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
+        updated_at TIMESTAMP NULL,
+        deleted_at TIMESTAMP NULL
+    );
+    ''',
+    '''
+    CREATE TABLE IF NOT EXISTS persons (
+        id INTEGER PRIMARY KEY,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        id_ident_type INTEGER NOT NULL,
+        ident_number TEXT NOT NULL,
+        id_exp_city INTEGER NOT NULL,
+        address TEXT NOT NULL,
+        mobile TEXT NOT NULL,
+        id_user INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
+        updated_at TIMESTAMP NULL,
+        deleted_at TIMESTAMP NULL,
+        FOREIGN KEY (id_ident_type) REFERENCES identification_types(id)
+    );
+    ''',
+    '''
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY,
+        code TEXT NOT NULL,
+        id_person TEXT NOT NULL,
+        status BOOLEAN NULL,
+        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
+        updated_at TIMESTAMP NULL,
+        deleted_at TIMESTAMP NULL,
+        FOREIGN KEY (id_person) REFERENCES persons(id)
 
-cursor.execute('''CREATE TABLE IF NOT EXISTS departments (
-                   
-                    id INTEGER PRIMARY KEY,
-                    name VARCHAR(100) NOT NULL,
-                    abrev VARCHAR(10) NOT NULL,
-                    descrip VARCHAR(10) NOT NULL,
-                    created_at  DATETIME  NOT NULL,
-                    updated_at  DATETIME  NOT NULL,
-                    deleled_at  DATETIME  NULL,
-                    id_country INTEGER NOT NULL,
-                    FOREIGN KEY  (id_country)   REFERENCES countries(id)
-                    
-                    )''')
+    );
+    ''',
+    '''
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        email TEXT NOT NULL,
+        password TEXT NOT NULL,
+        status BOOLEAN NULL,
+        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
+        updated_at TIMESTAMP NULL,
+        deleted_at TIMESTAMP NULL,
+        FOREIGN KEY (id) REFERENCES persons(id)
+    );
+    ''',
+]
 
-cursor.execute('''CREATE TABLE IF NOT EXISTS cities (
-                   
-                    id INTEGER PRIMARY KEY,
-                    name VARCHAR(100) NOT NULL,
-                    abrev VARCHAR(10) NOT NULL,
-                    descrip VARCHAR(10) NOT NULL,
-                    id_dept INTEGER,
-                    created_at DATETIME NOT NULL,
-                    updated_at DATETIME NOT NULL,
-                    deleled_at DATETIME NULL,
-                    FOREIGN KEY (id_dept) REFERENCES departments(id)
-                    
-                    )''')
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS persons (
-                   
-                    id INTEGER PRIMARY KEY,
-                    first_name VARCHAR(50) NOT NULL,
-                    last_name VARCHAR(10) NOT NULL,
-                    id_ident_type INTEGER NOT NULL,
-                    ident_number VARCHAR(15) NOT NULL,
-                    id_exp_city INTEGER,
-                    id_user INTEGER,
-                    address VARCHAR(50) NOT NULL,
-                    mobile VARCHAR(50) NOT NULL,
-                    created_at DATETIME NOT NULL,
-                    updated_at DATETIME NOT NULL,
-                    deleled_at DATETIME NULL,
-                        FOREIGN KEY (id_exp_city) REFERENCES cities(id),
-                        FOREIGN KEY (id_user) REFERENCES users(id)
-                    
-                    )''')
-
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS users (
-                   id INTEGER PRIMARY KEY,
-                   email VARCHAR(50) NOT NULL,
-                   password VARCHAR(250) NOT NULL,
-                   status BOOLEAN NULL,
-                   created_at DATETIME NOT NULL,
-                   updated_at DATETIME NOT NULL,
-                   deleled_at DATETIME NULL
-                    
-                    )''')
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS identification_types (
-                   id INTEGER  PRIMARY KEY,
-                   name VARCHAR(50) NOT NULL,
-                    abrev VARCHAR(10) NOT NULL,
-                    descrip VARCHAR(100) NOT NULL,
-                    created_at DATETIME NOT NULL,
-                    updated_at DATETIME NOT NULL,
-                    deleled_at DATETIME NULL,
-                    FOREIGN KEY (id) REFERENCES persons(id_ident_type)
-                    
-                    )''')
-
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS students (
-                   id INTEGER PRIMARY KEY,
-                   code VARCHAR(50) NOT NULL,
-                   id_person INTEGER ,
-                   status BOOLEAN NULL,
-                    created_at DATETIME NOT NULL,
-                    updated_at DATETIME NOT NULL,
-                    deleled_at DATETIME NULL,
-                      FOREIGN KEY (id_person) REFERENCES persons(id)
-                    
-                    )''')
-
+#Execute SQL (Query)
+for query in array_querys :
+    cur.execute(query)
 con.commit()
-con.close()
+
+#Save changes in database => Push to database
+
+#print("::: Database market has been created :::")
+
+#Close connection
+#con.close()
